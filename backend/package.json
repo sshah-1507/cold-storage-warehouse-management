@@ -1,0 +1,42 @@
+{
+  "name": "coldstoragewarehouse",
+  "version": "1.0.0",
+  "description": "Cold Storage Warehouse Management System Backend",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "seed": "node src/seed.js",
+    "migrate": "node src/migrate-all.js",
+    "contract:emit": "prisma contract emit",
+    "db:update": "prisma db update",
+    "test:day1": "node src/test-suite.js",
+    "test:day2": "node src/test-day2.js",
+    "test:all": "node src/test-all-stories.js",
+    "test": "node src/test-suite.js && node src/test-day2.js && node src/test-all-stories.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@prisma/client": "^7.10.0",
+    "@prisma/orm-postgres": "^8.0.0-rc.12",
+    "bcrypt": "^6.0.0",
+    "connect-pg-simple": "^10.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.4",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "node-cron": "^4.6.0",
+    "nodemailer": "^10.0.10",
+    "pg": "^8.23.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@prisma/cli-engine": "^0.6.1",
+    "@types/node": "^26.6.2",
+    "nodemon": "^3.1.14",
+    "prisma": "^8.0.0-rc.17"
+  }
+}

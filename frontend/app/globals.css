@@ -1,0 +1,219 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  color-scheme: light;
+  --background: #f7f5f0;
+  --foreground: #162235;
+  --card: #ffffff;
+  --card-foreground: #162235;
+  --popover: #ffffff;
+  --popover-foreground: #162235;
+  --primary: #0b1f3a;
+  --primary-foreground: #f5f0e6;
+  --secondary: #e8dcc8;
+  --secondary-foreground: #163a5f;
+  --muted: #f1eee7;
+  --muted-foreground: #667085;
+  --accent: #e8dcc8;
+  --accent-foreground: #163a5f;
+  --destructive: #c95c5c;
+  --border: #e3ddd2;
+  --input: #d8d0c3;
+  --ring: #2f7f7a;
+  --chart-1: #0b1f3a;
+  --chart-2: #2f7f7a;
+  --chart-3: #e8dcc8;
+  --chart-4: #c98a24;
+  --chart-5: #c95c5c;
+  --radius: 0.55rem;
+  --sidebar: #0b1f3a;
+  --sidebar-foreground: #f5f0e6;
+  --sidebar-primary: #e8dcc8;
+  --sidebar-primary-foreground: #0b1f3a;
+  --sidebar-accent: #163a5f;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #24496d;
+  --sidebar-ring: #e8dcc8;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .brand-mark {
+    @apply flex size-9 shrink-0 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground;
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16);
+  }
+  .brand-mark svg { @apply size-5; }
+  .eyebrow {
+    @apply text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground;
+  }
+  .metric-card {
+    @apply relative overflow-hidden border-border/80 shadow-[0_4px_18px_rgb(15_35_62_/0.04)] transition-shadow duration-200 hover:shadow-[0_8px_24px_rgb(15_35_62_/0.09)];
+  }
+  .metric-icon {
+    @apply flex size-9 items-center justify-center rounded-md;
+  }
+  .metric-icon svg { @apply size-[18px]; }
+  .metric-icon.navy { @apply bg-primary/10 text-primary; }
+  .metric-icon.teal { @apply bg-teal-100 text-teal-700; }
+  .metric-icon.amber { @apply bg-amber-100 text-amber-800; }
+  .metric-icon.red { @apply bg-red-100 text-red-700; }
+  .metric-line { @apply absolute inset-x-0 bottom-0 h-0.5; }
+  .metric-line.navy { @apply bg-primary; }
+  .metric-line.teal { @apply bg-teal-600; }
+  .metric-line.amber { @apply bg-amber-500; }
+  .metric-line.red { @apply bg-red-500; }
+  .activity-icon { @apply flex size-8 shrink-0 items-center justify-center rounded-md bg-muted text-primary; }
+  .activity-icon svg { @apply size-4; }
+  .status-neutral { @apply border-border bg-muted/60 text-muted-foreground; }
+  .status-success { @apply border-emerald-200 bg-emerald-50 text-emerald-700; }
+  .status-warning { @apply border-amber-200 bg-amber-50 text-amber-800; }
+  .status-critical { @apply border-red-200 bg-red-50 text-red-700; }
+}
+
+.dark {
+  --background: oklch(0.17 0.035 250);
+  --foreground: oklch(0.94 0.015 90);
+  --card: oklch(0.21 0.04 250);
+  --card-foreground: oklch(0.94 0.015 90);
+  --popover: oklch(0.21 0.04 250);
+  --popover-foreground: oklch(0.94 0.015 90);
+  --primary: oklch(0.78 0.07 85);
+  --primary-foreground: oklch(0.2 0.055 250);
+  --secondary: oklch(0.28 0.05 250);
+  --secondary-foreground: oklch(0.94 0.015 90);
+  --muted: oklch(0.25 0.04 250);
+  --muted-foreground: oklch(0.72 0.025 250);
+  --accent: oklch(0.28 0.05 250);
+  --accent-foreground: oklch(0.94 0.015 90);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.72 0.08 190);
+  --chart-1: oklch(0.78 0.07 85);
+  --chart-2: oklch(0.7 0.08 190);
+  --chart-3: oklch(0.57 0.08 250);
+  --sidebar: oklch(0.12 0.045 250);
+  --sidebar-foreground: oklch(0.92 0.015 90);
+  --sidebar-primary: oklch(0.78 0.07 85);
+  --sidebar-primary-foreground: oklch(0.2 0.055 250);
+  --sidebar-accent: oklch(0.24 0.06 250);
+  --sidebar-accent-foreground: oklch(0.94 0.015 90);
+  --sidebar-border: oklch(1 0 0 / 12%);
+}
+
+.dark .metric-icon.teal { @apply bg-teal-950/50 text-teal-300; }
+.dark .metric-icon.amber { @apply bg-amber-950/50 text-amber-300; }
+.dark .metric-icon.red { @apply bg-red-950/50 text-red-300; }
+.dark .status-success { @apply border-emerald-800 bg-emerald-950/50 text-emerald-300; }
+.dark .status-warning { @apply border-amber-800 bg-amber-950/50 text-amber-300; }
+.dark .status-critical { @apply border-red-800 bg-red-950/50 text-red-300; }
+  .dark .status-neutral { @apply border-border bg-muted text-muted-foreground; }
+
+  .login-page {
+    @apply grid min-h-screen bg-background lg:grid-cols-[minmax(0,1fr)_minmax(420px,560px)];
+  }
+  .login-panel {
+    @apply flex w-full max-w-md flex-col justify-center px-6 py-10 sm:px-10 lg:mx-auto lg:px-12;
+  }
+  .login-brand { @apply mb-16 flex items-center gap-3; }
+  .login-aside {
+    @apply hidden min-h-screen items-center bg-sidebar px-12 py-16 lg:flex;
+    background-image: radial-gradient(circle at 20% 20%, rgb(47 127 122 / 0.2), transparent 34%), linear-gradient(145deg, #0b1f3a 0%, #102d4c 100%);
+  }
+  .login-aside .eyebrow { @apply text-sidebar-foreground/60; }
+  @media (max-width: 1023px) {
+    .login-panel { @apply mx-auto; }
+  }
+  @media (max-width: 480px) {
+    .login-brand { @apply mb-12; }
+    .login-panel { @apply px-5; }
+  }
+

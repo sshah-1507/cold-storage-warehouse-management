@@ -1,0 +1,131 @@
+// use prisma-8
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      String   // ADMIN, MANAGER, STAFF, SUPPLIER, BUYER
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+}
+
+model Chamber {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  capacity  Int
+  occupied  Int      @default(0)
+  unit      String   @default("kg")
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+}
+
+model Batch {
+  id                String   @id @default(uuid())
+  productName       String
+  supplierId        String
+  quantity          Int
+  remainingQuantity Int
+  unit              String   @default("kg")
+  receivedAt        String   // YYYY-MM-DD
+  expiryDate        String   // YYYY-MM-DD
+  status            String   @default("RECEIVED") // RECEIVED, ALLOCATED, PARTIALLY_DISPATCHED, DISPATCHED
+  chamberId         String?
+  createdAt         TimestamptzString @default(now())
+  updatedAt         temporal.updatedAtString()
+}
+
+model Allocation {
+  id        String   @id @default(uuid())
+  batchId   String
+  chamberId String
+  quantity  Int
+  createdAt TimestamptzString @default(now())
+}
+
+model Withdrawal {
+  id          String   @id @default(uuid())
+  buyerId     String
+  productName String
+  quantity    Int
+  unit        String   @default("kg")
+  notes       String?
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED, DISPATCHED
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+}
+
+model Dispatch {
+  id           String   @id @default(uuid())
+  withdrawalId String
+  quantity     Int
+  status       String   @default("COMPLETED") // COMPLETED
+  createdAt    TimestamptzString @default(now())
+}
+
+model DispatchAllocation {
+  id         String   @id @default(uuid())
+  dispatchId String
+  batchId    String
+  quantity   Int
+  createdAt  TimestamptzString @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  action     String   // FIFO_OVERRIDE, PAYMENT_UPDATE, etc.
+  entityId   String
+  oldValue   String?
+  newValue   String?
+  reason     String?
+  userId     String
+  ipAddress  String
+  createdAt  TimestamptzString @default(now())
+}
+
+model Alert {
+  id             String   @id @default(uuid())
+  batchId        String
+  type           String   @default("NEAR_EXPIRY") // NEAR_EXPIRY, EXPIRED
+  message        String
+  deliveryStatus String   @default("PENDING") // PENDING, SENT, FAILED
+  attempts       Int      @default(0)
+  lastAttemptAt  TimestamptzString?
+  createdAt      TimestamptzString @default(now())
+}
+
+model RentCharge {
+  id          String   @id @default(uuid())
+  supplierId  String
+  periodStart String   // YYYY-MM-DD
+  periodEnd   String   // YYYY-MM-DD
+  amountPaise Int
+  currency    String   @default("INR")
+  status      String   @default("PENDING") // PENDING, PAID, PARTIALLY_PAID
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+}
+
+model Payment {
+  id                  String   @id @default(uuid())
+  rentId              String
+  amountPaise         Int
+  method              String   // BANK_TRANSFER, CASH, CHEQUE, UPI
+  reference           String?
+  maskedAccountNumber String?
+  status              String   @default("RECORDED") // RECORDED, ADJUSTED
+  paidAt              TimestamptzString @default(now())
+  createdAt           TimestamptzString @default(now())
+  updatedAt           temporal.updatedAtString()
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  assignedTo  String   // User ID (Staff)
+  dueDate     String   // YYYY-MM-DD
+  status      String   @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+}

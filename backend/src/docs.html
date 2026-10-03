@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cold Storage Warehouse API Documentation</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #fafafa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    .topbar {
+      display: none;
+    }
+    .header-banner {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #38bdf8;
+    }
+    .header-banner h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .header-badge {
+      background: #0284c7;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="header-banner">
+    <h1>Cold Storage Warehouse Management System — Complete OpenAPI Spec</h1>
+    <span class="header-badge">All 10 User Stories & 8 NFRs Live</span>
+  </div>
+  <div id="swagger-ui"></div>
+
+  <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js"></script>
+  <script>
+    window.onload = function() {
+      const spec = {
+        openapi: "3.0.3",
+        info: {
+          title: "Cold Storage Warehouse Management System API",
+          description: "Full API covering Authentication, Chambers, Batches, Allocations, Expiry Alerts, Withdrawals, FIFO Dispatches, Overrides, Rent, Payments, Staff Tasks, Reports, and Audit Logs.",
+          version: "1.0.0"
+        },
+        servers: [
+          {
+            url: "http://localhost:5000/api",
+            description: "Local development server"
+          }
+        ],
+        tags: [
+          { name: "System", description: "Health and discovery endpoints" },
+          { name: "US-01: Auth & Users", description: "Session login, logout, user profile and user provisioning" },
+          { name: "US-02: Batches & Stock Intake", description: "Incoming batch registration, inventory listing, search and filters" },
+          { name: "US-03: Chambers & Allocations", description: "Chamber capacities, occupancies and batch allocation" },
+          { name: "US-04: Expiry Alerts", description: "Batch expiry tracking and alert notification records" },
+          { name: "US-05: Dispatches & FIFO", description: "Strict FIFO batch dispatch and authorized FIFO overrides" },
+          { name: "US-06: Withdrawals", description: "Buyer stock withdrawals, request tracking, approval and rejection" },
+          { name: "US-07: Rent", description: "Storage rent calculations and billing charges" },
+          { name: "US-08: Payments", description: "Settlement recording, masked bank accounts, and transactional corrections" },
+          { name: "US-09: Tasks", description: "Staff task assignments, tracking and status updates" },
+          { name: "US-10: Reports", description: "Warehouse overview, occupancy, and Recharts-compatible revenue trends" },
+          { name: "NFR-3: Audit Logs", description: "Immutable transactional audit trail for overrides and payment edits" }
+        ],
+        paths: {
+          "/health": {
+            get: {
+              tags: ["System"],
+              summary: "Health Check (NFR-6)",
+              responses: {
+                "200": {
+                  description: "Server is healthy",
+                  content: { "application/json": { example: { status: "ok", timestamp: "2026-09-28T00:00:00.000Z", uptime: 12.5 } } }
+                }
+              }
+            }
+          },
+          "/auth/login": {
+            post: {
+              tags: ["US-01: Auth & Users"],
+              summary: "User Login",
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      required: ["email", "password"],
+                      properties: {
+                        email: { type: "string", example: "manager@example.com" },
+                        password: { type: "string", example: "password123" }
+                      }
+                    }
+                  }
+                }
+              },
+              responses: {
+                "200": {
+                  description: "Login successful; sets HTTP-only session cookie",
+                  content: {
+                    "application/json": {
+                      example: {
+                        data: { id: "u_manager_1", name: "Demo Manager", email: "manager@example.com", role: "MANAGER" }
+                      }
+                    }
+                  }
+                },
+                "400": { description: "Validation error" },
+                "401": { description: "Invalid email or password" }
+              }
+            }
+          },
+          "/auth/me": {
+            get: {
+              tags: ["US-01: Auth & Users"],
+              summary: "Current User Profile (Session Check)",
+              responses: {
+                "200": {
+                  description: "Current session user profile",
+                  content: {
+                    "application/json": {
+                      example: { data: { id: "u_manager_1", name: "Demo Manager", email: "manager@example.com", role: "MANAGER" } }
+                    }
+                  }
+                },
+                "401": { description: "Unauthenticated / Session expired" }
+              }
+            }
+          },
+          "/auth/logout": {
+            post: {
+              tags: ["US-01: Auth & Users"],
+              summary: "User Logout",
+              responses: {
+                "200": {
+                  description: "Session destroyed and cookie cleared",
+                  content: { "application/json": { example: { data: { message: "Logged out successfully" } } } }
+                }
+              }
+            }
+          },
+          "/users": {
+            get: {
+              tags: ["US-01: Auth & Users"],
+              summary: "List Users (Admin only)",
+              responses: {
+                "200": {
+                  description: "List of users",
+                  content: {
+                    "application/json": {
+                      example: { data: [{ id: "u_admin_1", name: "Super Admin", email: "admin@example.com", role: "ADMIN" }] }
+                    }
+                  }
+                },
+                "403": { description: "Forbidden" }
+              }
+            },
+            post: {
+              tags: ["US-01: Auth & Users"],
+              summary: "Create User with Role (Admin only)",
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      required: ["name", "email", "password", "role"],
+                      properties: {
+                        name: { type: "string", example: "New Staff Operator" },
+                        email: { type: "string", example: "operator@example.com" },
+                        password: { type: "string", example: "password123" },
+                        role: { type: "string", enum: ["ADMIN", "MANAGER", "STAFF", "SUPPLIER", "BUYER"], example: "STAFF" }
+                      }
+                    }
+                  }
+                }
+              },
+              responses: {
+                "201": {
+                  description: "User created",
+                  content: {
+                    "application/json": {
+                      example: { data: { id: "u_new_1", name: "New Staff Operator", email: "operator@example.com", role: "STAFF" } }
+                    }
+                  }
+                },
+                "409": { description: "Email already exists" }
+              }
+            }
+          },
+          "/chambers": {
+            get: {
+              tags: ["US-03: Chambers & Allocations"],
+              summary: "List Chambers and Occupancy",
+              responses: {
+                "200": {
+                  description: "List of chambers",
+                  content: {
+                    "application/json": {
+                      example: {
+                        data: [
+                          { id: "ch_1", name: "Chamber A (Apples Cold Storage)", capacity: 1000, occupied: 450, unit: "kg" },
+                          { id: "ch_4", name: "Chamber D (Vegetables Humidity-Controlled)", capacity: 800, occupied: 0, unit: "kg" }
+                        ]
+                      }
+                    }
+                  }
+                },
+                "403": { description: "Forbidden" }
+              }
+            }
+          },
+          "/allocations": {
+            post: {
+              tags: ["US-03: Chambers & Allocations"],
+              summary: "Allocate Batch to Chamber",
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      required: ["batchId", "chamberId", "quantity"],
+                      properties: {
+                        batchId: { type: "string", example: "batch_uuid_1" },
+                        chamberId: { type: "string", example: "ch_4" },
+                        quantity: { type: "integer", example: 100 }
+                      }
+                    }
+                  }
+                }
+              },
+              responses: {
+                "201": {
+                  description: "Batch allocated; chamber occupancy updated",
+                  content: {
+                    "application/json": {
+                      example: { data: { id: "alloc_1", batchId: "batch_uuid_1", chamberId: "ch_4", quantity: 100 } }
+                    }
+                  }
+                },
+                "409": { description: "Capacity exceeded or batch already allocated" }
+              }
+            }
+          },
+          "/batches": {
+            post: {
+              tags: ["US-02: Batches & Stock Intake"],
+              summary: "Register Incoming Stock Batch",
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      required: ["productName", "supplierId", "quantity", "unit", "receivedAt", "expiryDate"],
+                      properties: {
+                        productName: { type: "string", example: "Shimla Apples" },
+                        supplierId: { type: "string", example: "u_supplier_1" },
+                        quantity: { type: "integer", example: 100 },
+                        unit: { type: "string", example: "kg" },
+                        receivedAt: { type: "string", example: "2026-09-25" },
+                        expiryDate: { type: "string", example: "2026-10-25" }
+                      }
+                    }
+                  }
+                }
+              },
+              responses: {
+                "201": {
+                  description: "Batch registered successfully",
+                  content: {
+                    "application/json": {
+                      example: {
+                        data: {
+                          id: "batch_uuid_1",
+                          productName: "Shimla Apples",
+                          supplierId: "u_supplier_1",
+                          quantity: 100,
+                          remainingQuantity: 100,
+                          unit: "kg",
+                          receivedAt: "2026-09-25",
+                          expiryDate: "2026-10-25",
+                          status: "RECEIVED",
+                          chamberId: null
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": { description: "Validation error" }
+              }
+            },
+            get: {
+              tags: ["US-02: Batches & Stock Intake"],
+              summary: "List & Search Stock Inventory",
+              parameters: [
+                { name: "search", in: "query", schema: { type: "string" }, description: "Case-insensitive product name search" },
+                { name: "status", in: "query", schema: { type: "string" }, description: "RECEIVED, ALLOCATED, PARTIALLY_DISPATCHED, DISPATCHED" },
+                { name: "page", in: "query", schema: { type: "integer", default: 1 } },
+                { name: "limit", in: "query", schema: { type: "integer", default: 50 } }
+              ],
+              responses: {
+                "200": {
+                  description: "List of stock batches",
+                  content: {
+                    "application/json": {
+                      example: {
+                        data: [
+                          {
+                            id: "batch_uuid_1",
+                            productName: "Shimla Apples",
+                            supplierId: "u_supplier_1",
+                            quantity: 100,
+                            remainingQuantity: 100,
+                            unit: "kg",
+                            receivedAt: "2026-09-25",
+                            expiryDate: "2026-10-25",
+                            status: "ALLOCATED",
+                            chamberId: "ch_4"
+                          }
+                        ],
+                        meta: { total: 1, page: 1, limit: 50, totalPages: 1 }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/batches/{id}": {
+            get: {
+              tags: ["US-02: Batches & Stock Intake"],
+              summary: "Get Batch Details",
+              parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+              responses: {
+                "200": { description: "Batch details" },
+                "404": { description: "Batch not found" }
+              }
+            }
+          },
+          "/alerts": {
+            get: {
+              tags: ["US-04: Expiry Alerts"],
+              summary: "List Expiry Alerts (US-04)",
+              parameters: [
+                { name: "type", in: "query", schema: { type: "string", enum: ["NEAR_EXPIRY", "EXPIRED"] } },
+                { name: "deliveryStatus", in: "query", schema: { type: "string", enum: ["SENT", "PENDING", "FAILED"] } },
+                { name: "page", in: "query", schema: { type: "integer", default: 1 } },
+                { name: "limit", in: "query", schema: { type: "integer", default: 50 } }
+              ],
+              responses: {
+                "200": {
+                  description: "List of expiry alert notifications",
+                  content: {
+                    "application/json": {
+                      example: {
+                        data: [
+                          {
+                            id: "alert_1",
+                            batchId: "batch_uuid_1",
+                            type: "NEAR_EXPIRY",
+                            message: "Batch batch_uuid_1 is near expiry",
+                            deliveryStatus: "SENT",
+                            createdAt: "2026-09-28T00:00:00.000Z"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/withdrawals": {
+            post: {
+              tags: ["US-06: Withdrawals"],
+              summary: "Request Withdrawal",
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      required: ["productName", "quantity", "unit"],
+                      properties: {
+                        productName: { type: "string", example: "Shimla Apples" },
+                        quantity: { type: "integer", example: 20 },
+                        unit: { type: "string", example: "kg" },
+                        notes: { type: "string", example: "Order #849" }
+                      }
+                    }
+                  }
+                }
+              },
+              responses: {
+                "201": {
+                  description: "Withdrawal request created",
+                  content: {
+                    "application/json": {
+                      example: {
+                        data: { id: "wr_1", buyerId: "u_buyer_1", productName: "Shimla Apples", quantity: 20, unit: "kg", status: "PENDING" }
+                      }
+                    }
+                  }
+                },
+                "409": { description: "Insufficient warehouse stock" }
+              }
+            },
+            get: {
+              tags: ["US-06: Withdrawals"],
+              summary: "List Withdrawal Requests",
+              parameters: [
+                { name: "status", in: "query", schema: { type: "string", enum: ["PENDING", "APPROVED", "REJECTED", "DISPATCHED"] } }
+              ],
+              responses: {
+                "200": { description: "List of requests" }
+              }
+            }
+          },
+          "/withdrawals/{id}/status": {
+            patch: {
+              tags: ["US-06: Withdrawals"],
+              summary: "Approve or Reject Withdrawal Request",
+              parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      required: ["status"],
+                      properties: { status: { type: "string", enum: ["APPROVED", "REJECTED"] } }
+                    }
+                  }
+                }
+              },
+              responses: {
+                "200": { description: "Status updated" },
+                "409": { description: "Invalid status transition" }
+              }
+            }
+          },
+          "/dispatches": {
+            post: {
+              tags: ["US-05: Dispatches & FIFO"],
+              summary: "Dispatch Approved Request using Strict FIFO",
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      required: ["withdrawalId"],
+                      properties: { withdrawalId: { type: "string", example: "wr_1" } }
+                    }
+                  }
+                }
+              },
+              responses: {
+                "201": {
+                  description: "Dispatched using earliest available batches",
+                  content: {
+                    "application/json": {
+                      example: {
+                        data: {
+                          id: "dispatch_1",
+                          withdrawalId: "wr_1",
+                          quantity: 20,
+                          batchAllocations: [{ batchId: "batch_uuid_1", quantity: 20 }],
+                          status: "COMPLETED"
+                        }
+                      }
+                    }
+                  }
+                },
+                "409": { description: "Not approved or duplicate dispatch" }
+              }
+            }
+          },
+          "/dispatches/override": {
+            post: {
+              tags: ["US-05: Dispatches & FIFO"],
+              summary: "Authorized FIFO Override with Reason (US-05 / NFR-3)",
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      required: ["withdrawalId", "batchId", "reason"],
+                      properties: {
+                        withdrawalId: { type: "string", example: "wr_1" },
+                        batchId: { type: "string", example: "batch_uuid_2" },
+                        reason: { type: "string", example: "Customer requested premium lot from specific cold chamber" }
+                      }
+                    }
+                  }
+                }
+              },
+              responses: {
+                "201": { description: "Override dispatched and logged to AuditLog" }
+              }
+            }
+          },
+          "/rent/calculate": {
+            post: {
+              tags: ["US-07: Rent"],
+              summary: "Calculate Rent Estimate and Create Charge",
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      required: ["supplierId", "startDate", "endDate"],
+                      properties: {
+                        supplierId: { type: "string", example: "u_supplier_1" },
+                        startDate: { type: "string", example: "2026-09-01" },
+                        endDate: { type: "string", example: "2026-09-30" }
+                      }
+                    }
+                  }
+                }
+              },
+              responses: {
+                "200": {
+                  description: "Calculated rent charge (in paise)",
+                  content: {
+                    "application/json": {
+                      example: {
+                        data: { id: "rent_1", supplierId: "u_supplier_1", periodStart: "2026-09-01", periodEnd: "2026-09-30", amountPaise: 150000, currency: "INR", status: "PENDING" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/rent": {
+            get: {
+              tags: ["US-07: Rent"],
+              summary: "List Rent Charges",
+              parameters: [{ name: "status", in: "query", schema: { type: "string" } }],
+              responses: {
+                "200": { description: "List of rent charges" }
+              }
+            }
+          },
+          "/payments": {
+            post: {
+              tags: ["US-08: Payments"],
+              summary: "Record Settlement Payment",
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      required: ["rentId", "amountPaise", "method"],
+                      properties: {
+                        rentId: { type: "string", example: "rent_1" },
+                        amountPaise: { type: "integer", example: 150000 },
+                        method: { type: "string", enum: ["BANK_TRANSFER", "CASH", "CHEQUE", "UPI"], example: "BANK_TRANSFER" },
+                        reference: { type: "string", example: "TXN-8849" },
+                        accountNumber: { type: "string", example: "987654321012" }
+                      }
+                    }
+                  }
+                }
+              },
+              responses: {
+                "201": {
+                  description: "Payment recorded; bank account masked to ****1012",
+                  content: {
+                    "application/json": {
+                      example: {
+                        data: { id: "pay_1", rentId: "rent_1", amountPaise: 150000, method: "BANK_TRANSFER", maskedAccountNumber: "****1012", status: "RECORDED" }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            get: {
+              tags: ["US-08: Payments"],
+              summary: "List Payments",
+              responses: { "200": { description: "List of recorded payments" } }
+            }
+          },
+          "/payments/{id}": {
+            patch: {
+              tags: ["US-08: Payments"],
+              summary: "Correct Payment with Audit Log (NFR-3)",
+              parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      required: ["amountPaise", "reason"],
+                      properties: {
+                        amountPaise: { type: "integer", example: 140000 },
+                        reason: { type: "string", example: "Corrected TDS deduction" }
+                      }
+                    }
+                  }
+                }
+              },
+              responses: { "200": { description: "Payment corrected and logged to AuditLog" } }
+            }
+          },
+          "/tasks": {
+            post: {
+              tags: ["US-09: Tasks"],
+              summary: "Assign Staff Task",
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      required: ["title", "assignedTo", "dueDate"],
+                      properties: {
+                        title: { type: "string", example: "Inspect Chamber A temperature" },
+                        description: { type: "string", example: "Ensure digital reading aligns with analog gauge" },
+                        assignedTo: { type: "string", example: "u_staff_1" },
+                        dueDate: { type: "string", example: "2026-09-30" }
+                      }
+                    }
+                  }
+                }
+              },
+              responses: { "201": { description: "Task created" } }
+            },
+            get: {
+              tags: ["US-09: Tasks"],
+              summary: "List Tasks",
+              parameters: [{ name: "status", in: "query", schema: { type: "string", enum: ["PENDING", "IN_PROGRESS", "COMPLETED"] } }],
+              responses: { "200": { description: "List of staff tasks" } }
+            }
+          },
+          "/tasks/{id}": {
+            patch: {
+              tags: ["US-09: Tasks"],
+              summary: "Update Task Status",
+              parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      required: ["status"],
+                      properties: { status: { type: "string", enum: ["PENDING", "IN_PROGRESS", "COMPLETED"] } }
+                    }
+                  }
+                }
+              },
+              responses: { "200": { description: "Task status updated" } }
+            }
+          },
+          "/reports/overview": {
+            get: {
+              tags: ["US-10: Reports"],
+              summary: "Warehouse Overview Metrics",
+              responses: {
+                "200": {
+                  description: "Overview metrics",
+                  content: {
+                    "application/json": {
+                      example: { data: { totalBatches: 248, nearExpiryBatches: 12, occupancyPercent: 76, revenuePaise: 48000000, currency: "INR" } }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/reports/revenue": {
+            get: {
+              tags: ["US-10: Reports"],
+              summary: "Revenue Trend Chart (Recharts Compatible)",
+              parameters: [{ name: "months", in: "query", schema: { type: "integer", default: 6 } }],
+              responses: {
+                "200": {
+                  description: "Monthly revenue trend",
+                  content: {
+                    "application/json": {
+                      example: { data: [{ month: "2026-09", revenuePaise: 48000000 }] }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/reports/operations": {
+            get: {
+              tags: ["US-10: Reports"],
+              summary: "Operations Summary (Chamber Occupancies & Batch Counts)",
+              responses: { "200": { description: "Detailed operations metrics" } }
+            }
+          },
+          "/audit-logs": {
+            get: {
+              tags: ["NFR-3: Audit Logs"],
+              summary: "Review Audit Logs (Admin & Manager)",
+              parameters: [
+                { name: "action", in: "query", schema: { type: "string" } },
+                { name: "entityId", in: "query", schema: { type: "string" } }
+              ],
+              responses: {
+                "200": {
+                  description: "Immutable audit log records with actor, IP, timestamp and old/new values",
+                  content: {
+                    "application/json": {
+                      example: {
+                        data: [
+                          {
+                            id: "audit_1",
+                            action: "FIFO_OVERRIDE",
+                            entityId: "dispatch_1",
+                            reason: "Customer requested specific lot",
+                            userId: "u_manager_1",
+                            ipAddress: "127.0.0.1",
+                            createdAt: "2026-09-28T00:00:00.000Z"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      };
+
+      SwaggerUIBundle({
+        spec: spec,
+        dom_id: '#swagger-ui',
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        layout: "BaseLayout",
+        deepLinking: true
+      });
+    };
+  </script>
+</body>
+</html>

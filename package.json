@@ -1,0 +1,16 @@
+{
+  "name": "cold-storage-warehouse-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cold Storage Warehouse Management System - Full-stack React + Express + Prisma + PostgreSQL",
+  "scripts": {
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "pnpm --prefix frontend dev",
+    "build:frontend": "pnpm --prefix frontend build",
+    "seed": "npm --prefix backend run seed",
+    "test:backend": "npm --prefix backend test"
+  },
+  "keywords": ["cold-storage", "wms", "express", "nextjs", "prisma", "postgresql"],
+  "author": "",
+  "license": "ISC"
+}
